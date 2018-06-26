@@ -1,5 +1,5 @@
-import pwmcheck_implement
 
-print('hello world!')
-prog = pwmcheck_implement.runPWM()
-prog
+import readSensor as rs
+
+
+inputValue = float(input("Enter the desired depth :- "))
