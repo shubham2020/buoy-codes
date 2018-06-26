@@ -51,6 +51,7 @@ def depth_read():
                     sensor.temperature(ms5837.UNITS_Farenheit)) # Request Farenheit
                     '''
                     yield (sensor.depth())
+					#return(sensor.depth())
             else:
                     print "Sensor read failed!"
                     exit(1)
