@@ -8,7 +8,6 @@ while True:
 
 	if rlist:
 		print "Config selected..."
-		break
 	else:
 		continue
 		#print "Timed out..."
