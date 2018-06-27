@@ -5,8 +5,8 @@ def runPWM():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
 
-    pwm_pin = 8
-    GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.LOW)
+    pwm_pin = 40
+    GPIO.setup(pwm_pin,GPIO.OUT, initial=GPIO.LOW)
     freq = float(input("Enter the frequency for the system :- "))
     dc = int(input("Enter the duty cycle to begin with :- "))
     p = GPIO.PWM(pwm_pin, freq)#  is the frequency
