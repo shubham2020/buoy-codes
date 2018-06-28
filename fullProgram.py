@@ -10,8 +10,8 @@ try:
 		if userDecision == 'y':
 			desiredDepth = float(input("Enter the desired depth :- "))
 			currentDepth = rs.depth_read()
-			Kp =     #Proportional control to be set
-			Kd =     #Derivative control to be set
+			Kp = 1    #Proportional control to be set
+			Kd = 1    #Derivative control to be set
 			
 			#PWM setup start
 			GPIO.setwarnings(False)

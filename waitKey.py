@@ -7,8 +7,7 @@ while True:
 	rlist, wlist, xlist = select([sys.stdin],[],[],timeout)
 
 	if rlist:
-		print "Config selected..."
-		break
+		name = input("Enter your name :-")
 	else:
 		continue
 		#print "Timed out..."
