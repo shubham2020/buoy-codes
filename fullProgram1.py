@@ -46,13 +46,15 @@ try:
 			desiredDepth = float(input("Enter the desired depth :- "))
 			currentDepth = depth()
 			print (currentDepth)
-			Kp = 1    #Proportional control to be set
-			Kd = 1    #Derivative control to be set
+			Kp = .1    #Proportional control to be set
+			Kd = .01    #Derivative control to be set
+			Ki = .01    #Integral control to be set
 			
 			print ("At any time enter 1 to continue with new depth or enter 2 to Shutdown the bot....")
-			error = currentDepth - desiredDepth
+			error = (currentDepth - desiredDepth)
 			error_prev = error
 			while True:
+                                error_int = 0
 				userChoice = int(input ())
 				if userChoice == 2:
 					print("Shutting down the bot !!!")
@@ -70,7 +72,15 @@ try:
 						#waiting part over
 						
 						currentDepth = depth()
-						error = currentDepth - desiredDepth
+						error = (currentDepth - desiredDepth)
+						error_bar =  error - error_prev
+						error_prev = error
+						error_int = error_int + error
+						net = Kp*error + Kd*error_bar + Ki*error_int
+						out = (1/(1+math.exp(-net)))
+						pwm = float(int(out*1000)/10)
+						p.ChangeDutyCycle(pwm)
+						'''
 						if error < 0:
                                                         pwm = 0
 							p.ChangeDutyCycle(pwm)
@@ -81,6 +91,7 @@ try:
 							out = (1/(1+math.exp(-net)))
 							pwm = float(int(out*1000)/10)
 							p.ChangeDutyCycle(pwm)
+						'''
 						print(str(error)+'\t\t'+str(pwm))
 				else:
 					print("Choice ain't valid. Choose again !!!!")
