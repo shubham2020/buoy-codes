@@ -5,25 +5,23 @@ import sys
 import select
 
 try:
+
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BOARD)
+        pwm_pin = 40
+	GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.LOW)
+	freq = 100 				#float(input("Enter the frequency for the system :- "))
+	p = GPIO.PWM(pwm_pin, freq) 			
+	dutyCycle = 0
+	p.start(dutyCycle)				# here number is duty cycle
+	#PWM setup over
 	while True:
 		userDecision = input("Enter y to start the bot or q to quit :- ")
 		if userDecision == 'y':
 			desiredDepth = float(input("Enter the desired depth :- "))
 			currentDepth = rs.depth_read()
-			Kp = 1    #Proportional control to be set
-			Kd = 1    #Derivative control to be set
-			
-			#PWM setup start
-			GPIO.setwarnings(False)
-			GPIO.setmode(GPIO.BOARD)
-
-			pwm_pin = 40
-			GPIO.setup(pwm_pin, GPIO.OUT, initial=GPIO.LOW)
-			freq = 100 				#float(input("Enter the frequency for the system :- "))
-			p = GPIO.PWM(pwm_pin, freq) 			
-			dutyCycle = 0
-			p.start(dutyCycle)				# here number is duty cycle
-			#PWM setup over
+			Kp =     #Proportional control to be set
+			Kd =     #Derivative control to be set
 			
 			print ("At any time enter c to change the desired depth or shutdown the bot...")
 			error = currentDepth - desiredDepth
