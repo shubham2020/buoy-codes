@@ -13,6 +13,7 @@ def animate(i):
     #print(lines)
     xs = []
     ys = []
+    x= y=0
     for line in lines:
         if len(line)>1:
             x,y = line.split(',')

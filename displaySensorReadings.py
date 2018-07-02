@@ -40,6 +40,7 @@ def depth_read():
 
     time.sleep(5)
     i=0
+    t=0
     # Spew readings
     while True:
             if sensor.read(ms5837.OSR_8192):
@@ -53,8 +54,14 @@ def depth_read():
                     sensor.temperature(), # Default is degrees C (no arguments)
                     sensor.temperature(ms5837.UNITS_Farenheit)) # Request Farenheit
                     '''
-                    print("{} \t \t {} \t \t \t \t {}".format(sensor.depth()*100,sensor.pressure(),sensor.temperature()))
-                    i=i+1 
+                    depth1 = sensor.depth()*100
+                    depth2 = sensor.pressure()
+                    print("{} \t \t {} \t \t \t \t {}".format(depth1,depth2,sensor.temperature()))
+                    i=i+1
+                    t=t+1
+                    msg = str(t)+','+str(depth1)+'\n'
+                    with open("testData.txt","a") as f:
+                        f.write(msg)
                     time.sleep(1)
             else:
                     print "Sensor read failed!"
