@@ -19,10 +19,17 @@ try:
             print "Sensor read failed!"
             exit(1)
         time.sleep(5)
+        sensor.read(ms5837.OSR_8192)
+        calib_depth = sensor.depth()*100
+        n = 5 #sensor moving average window size
+        arr = [0]*n
         def depth():
             if sensor.read(ms5837.OSR_8192): # reading at 0.2 cm resolution
-                #yield (sensor.depth())
-                return(sensor.depth()*100+13) #offset 13 is added for calibration
+                for j in range(n-1):         # moving average calculation starts here
+                    arr[j]=arr[j+1]
+                arr[j+1]=sensor.depth()*100 - calib_depth   #removing calibration offset in environment
+                avg_sensor_reading = sum(arr)/n  #moving average calculation ends here
+                return(avg_sensor_reading) 
             else:
                 print "Sensor read failed!"
                 exit(1)
@@ -73,11 +80,14 @@ try:
 						
 						currentDepth = depth()
 						error = (currentDepth - desiredDepth)
+						if math.fabs(error) < 2: #to stop actuation once we reach within +/-2cm of target depth
+                                                    p.ChangeDutyCycle(0) #to stop actuation which otherwise continues with previous values
+                                                    continue
 						error_bar =  error - error_prev
 						error_prev = error
 						error_int = error_int + error
 						net = Kp*error + Kd*error_bar + Ki*error_int
-						out = (1/(1+math.exp(-net)))
+						out = (1/(1+math.exp(-net)))  #sigmoid function to bound pwm
 						pwm = float(int(out*1000)/10)
 						p.ChangeDutyCycle(pwm)
 						'''
