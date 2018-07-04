@@ -41,7 +41,13 @@ def depth_read():
     time.sleep(5)
     i=0
     t=0
+    n = 5 # filter window length
+    arr = [0]*n
+    arr_bar = [0]*n
     # Spew readings
+    sensor.read(ms5837.OSR_8192)
+    init_depth = sensor.depth()*100 #to gauge atmospheric condition and substract from data
+    init_press = sensor.pressure()
     while True:
             if sensor.read(ms5837.OSR_8192):
                     if i == 20 or i == 0:
@@ -54,13 +60,22 @@ def depth_read():
                     sensor.temperature(), # Default is degrees C (no arguments)
                     sensor.temperature(ms5837.UNITS_Farenheit)) # Request Farenheit
                     '''
-                    depth1 = sensor.depth()*100
-                    depth2 = sensor.pressure()
-                    print("{} \t \t {} \t \t \t \t {}".format(depth1,depth2,sensor.temperature()))
+                    depth1 = sensor.depth()*100 - init_depth
+                    depth2 = sensor.pressure()-init_press
+                    # applying moving average filter for 10 values window
+                    for j in range(n-1):
+                        arr[j]=arr[j+1]
+                        arr_bar[j]=arr_bar[j+1]                        
+                    arr[j+1]=depth1
+                    arr_bar[j+1]=depth2
+                    avg = sum(arr)/n
+                    avg_bar = sum(arr_bar)/n
+                    #filter over
+                    print("{} \t \t {} \t \t \t \t {}".format(avg,avg_bar,sensor.temperature()))
                     i=i+1
                     t=t+1
-                    msg = str(t)+','+str(depth1)+'\n'
-                    with open("testData.txt","a") as f:
+                    msg = str(t)+','+str(avg)+'\n'
+                    with open("/home/pi/buoy-codes/data files/testData 12-00(4 July 2018)mvg_avg.txt","a") as f:
                         f.write(msg)
                     time.sleep(1)
             else:
