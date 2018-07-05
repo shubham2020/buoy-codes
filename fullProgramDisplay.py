@@ -6,7 +6,9 @@ import select
 import ms5837
 import time
 
-try:
+try:    # Global variables
+        i = 0 #for graph plotting purposes
+        # Global variables end
         #Sensor setup start
         sensor = ms5837.MS5837_30BA() 
         # We must initialize the sensor before reading it
@@ -102,6 +104,14 @@ try:
 							pwm = float(int(out*1000)/10)
 							p.ChangeDutyCycle(pwm)
 						'''
+						#including display part by writing it to a file
+						i = i+1
+						msg1 = str(i)+','+str(error)+'\n'
+						msg2 = str(i)+','+str(pwm)+'\n'
+						with open('filename1.txt','a') as file1:
+                                                    file1.write(msg1)
+                                                with open('filename2.txt','a') as file2:
+                                                    file2.write(msg2)
 						print(str(error)+'\t\t'+str(pwm))
 				else:
 					print("Choice ain't valid. Choose again !!!!")
