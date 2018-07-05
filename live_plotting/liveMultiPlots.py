@@ -21,7 +21,7 @@ def animate(i):
         if len(line1)>1:
             x1,y1 = line1.split(',')
         x1 = int(x1)
-        y1 = -float(int(float(y1)*10)/10) # added -ve sign for showing depth in downward direction
+        y1 = float(int(float(y1)*10)/10) # added -ve sign for showing depth in downward direction
         #print(x,y)
         xs1.append(x1)
         ys1.append(y1)
@@ -43,7 +43,7 @@ def animate(i):
         if len(line2)>1:
             x2,y2 = line2.split(',')
         x2 = int(x2)
-        y2 = -float(int(float(y2)*10)/10) # added -ve sign for showing depth in downward direction
+        y2 = float(int(float(y2)*10)/10) # added -ve sign for showing depth in downward direction
         #print(x,y)
         xs2.append(x2)
         ys2.append(y2)
