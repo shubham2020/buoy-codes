@@ -108,9 +108,9 @@ try:    # Global variables
 						i = i+1
 						msg1 = str(i)+','+str(error)+'\n'
 						msg2 = str(i)+','+str(pwm)+'\n'
-						with open('filename1.txt','a') as file1:
+						with open('/home/pi/buoy-codes/data files/errorData1(5July18).txt','a') as file1:
                                                     file1.write(msg1)
-                                                with open('filename2.txt','a') as file2:
+                                                with open('/home/pi/buoy-codes/data files/pwmData1(5July18).txt','a') as file2:
                                                     file2.write(msg2)
 						print(str(error)+'\t\t'+str(pwm))
 				else:
