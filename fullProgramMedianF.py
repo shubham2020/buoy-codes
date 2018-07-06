@@ -74,7 +74,7 @@ try:    # Global variables
 			currentDepth = depth()
 			print (currentDepth)
 			Kp = .5    #Proportional control to be set
-			Kd = .01    #Derivative control to be set
+			Kd = .07    #Derivative control to be set
 			Ki = 0    #Integral control to be set
 			
 			print ("At any time enter 1 to continue with new depth or enter 2 to Shutdown the bot....")
@@ -89,9 +89,8 @@ try:    # Global variables
 					sys.exit(0)
 				elif userChoice == 1:
 					desiredDepth = float(input("Enter the desired depth :- "))
-				e1 = time.time() #this is for first time calculation
-					while True:    
-						
+                                        e1 = time.time() #this is for first time calculation
+                                        while True:    
 						#code snippet for waiting for any key stroke
 						timeout = 0.001
 						rlist, wlist, xlist = select.select([sys.stdin], [], [], timeout)
@@ -102,11 +101,12 @@ try:    # Global variables
 						currentDepth = depth()
 						error = (currentDepth - desiredDepth)
 						if math.fabs(error) < 0.4: #to stop actuation once we reach within +/-2cm of target depth
+                                                    print("Bot within no action range")
                                                     p.ChangeDutyCycle(0) #to stop actuation which otherwise continues with previous values
                                                     continue
                                                 e2 = time.time() #time ends now
-                                                dt = float((int((e2 - e1)*1000))/1000)
-						error_bar =  (error - error_prev)/dt
+                                                dt = (int((e2 - e1)*1000))
+						error_bar =  ((error - error_prev)*1000)/dt
 						error_prev = error
 						error_int = error_int + error*dt
 						e1 = time.time() #time starts now
@@ -134,7 +134,7 @@ try:    # Global variables
                                                     file1.write(msg1)
                                                 with open('/home/pi/buoy-codes/data files/pwmData1(5July18).txt','a') as file2:
                                                     file2.write(msg2)
-						#print(str(error)+'\t\t'+str(pwm))
+						print(str(error)+'\t\t'+str(pwm))
 				else:
 					print("Choice ain't valid. Choose again !!!!")
 		if userDecision == 2:

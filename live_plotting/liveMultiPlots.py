@@ -8,7 +8,7 @@ fig = plt.figure()
 ax1 = fig.add_subplot(2,1,1)
 ax2 = fig.add_subplot(2,1,2)
 Kp = 0.5
-Kd = 0.01
+Kd = 0.07
 Ki = 0
 
 def animate(i):
@@ -54,7 +54,7 @@ def animate(i):
     ax2.plot(xs2, ys2)
     ax2.set_title('PWM status for Kp = {} Kd = {} Ki = {}'.format(Kp,Kd,Ki))
     ax2.set_ylabel('PWM in %age')
-    ax2.set_xlabel('time (in secs)')
+    ax2.set_xlabel('time (in millisecs)')
     #Part for subplot 2 ends here
 #========================================================================================================#
 	
