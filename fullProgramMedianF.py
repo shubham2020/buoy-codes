@@ -25,7 +25,7 @@ try:    # Global variables
         calib_depth = sensor.depth()*100
         n = 51 #sensor window size for median or mean filter
         arr = [0]*n
-		''' #this is implementation of mean filter
+	''' #this is implementation of mean filter
         def depth():
             if sensor.read(ms5837.OSR_8192): # reading at 0.2 cm resolution
                 for j in range(n-1):         # moving average calculation starts here
@@ -37,18 +37,18 @@ try:    # Global variables
                 print "Sensor read failed!"
                 exit(1)'''
 				
-		def depth(): #this is implementation of median filter
+	def depth(): #this is implementation of median filter
             if sensor.read(ms5837.OSR_8192): # reading at 0.2 cm resolution
                 for j in range(n):         
                     arr[j]=sensor.depth()*100 - calib_depth
-				temp = arr[0]
+		temp = arr[0]
                 for i in range(n-1):
-					for j in range(i,n):
-						if arr[i]>arr[j]:
-							temp = arr[i]
-							arr[i] = arr[j]
-							arr[j] = temp
-				median_depth = arr[(int(n/2)+1)]
+		    for j in range(i,n):
+			if arr[i]>arr[j]:
+			    temp = arr[i]
+			    arr[i] = arr[j]
+			    arr[j] = temp
+		median_depth = arr[(int(n/2)+1)]
                 return(median_depth) 
             else:
                 print "Sensor read failed!"
@@ -73,9 +73,9 @@ try:    # Global variables
 			desiredDepth = float(input("Enter the desired depth :- "))
 			currentDepth = depth()
 			print (currentDepth)
-			Kp = .1    #Proportional control to be set
+			Kp = .5    #Proportional control to be set
 			Kd = .01    #Derivative control to be set
-			Ki = .01    #Integral control to be set
+			Ki = 0    #Integral control to be set
 			
 			print ("At any time enter 1 to continue with new depth or enter 2 to Shutdown the bot....")
 			error = (currentDepth - desiredDepth)
@@ -89,6 +89,7 @@ try:    # Global variables
 					sys.exit(0)
 				elif userChoice == 1:
 					desiredDepth = float(input("Enter the desired depth :- "))
+				e1 = time.time() #this is for first time calculation
 					while True:    
 						
 						#code snippet for waiting for any key stroke
@@ -100,12 +101,15 @@ try:    # Global variables
 						
 						currentDepth = depth()
 						error = (currentDepth - desiredDepth)
-						if math.fabs(error) < 2: #to stop actuation once we reach within +/-2cm of target depth
+						if math.fabs(error) < 0.4: #to stop actuation once we reach within +/-2cm of target depth
                                                     p.ChangeDutyCycle(0) #to stop actuation which otherwise continues with previous values
                                                     continue
-						error_bar =  error - error_prev
+                                                e2 = time.time() #time ends now
+                                                dt = float((int((e2 - e1)*1000))/1000)
+						error_bar =  (error - error_prev)/dt
 						error_prev = error
-						error_int = error_int + error
+						error_int = error_int + error*dt
+						e1 = time.time() #time starts now
 						net = Kp*error + Kd*error_bar + Ki*error_int
 						out = (1/(1+math.exp(-net)))  #sigmoid function to bound pwm
 						pwm = float(int(out*1000)/10)
@@ -123,14 +127,14 @@ try:    # Global variables
 							p.ChangeDutyCycle(pwm)
 						'''
 						#including display part by writing it to a file
-						i = i+1
+						i = i+dt
 						msg1 = str(i)+','+str(error)+'\n'
 						msg2 = str(i)+','+str(pwm)+'\n'
 						with open('/home/pi/buoy-codes/data files/errorData1(5July18).txt','a') as file1:
-                            file1.write(msg1)
-                        with open('/home/pi/buoy-codes/data files/pwmData1(5July18).txt','a') as file2:
-                            file2.write(msg2)
-						print(str(error)+'\t\t'+str(pwm))
+                                                    file1.write(msg1)
+                                                with open('/home/pi/buoy-codes/data files/pwmData1(5July18).txt','a') as file2:
+                                                    file2.write(msg2)
+						#print(str(error)+'\t\t'+str(pwm))
 				else:
 					print("Choice ain't valid. Choose again !!!!")
 		if userDecision == 2:

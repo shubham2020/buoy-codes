@@ -73,10 +73,10 @@ def depth_read():
                     #filter over
                     print("{} \t \t {} \t \t \t \t {}".format(avg,avg_bar,sensor.temperature()))
                     i=i+1
-                    t=t+1
-                    msg = str(t)+','+str(avg)+'\n'
-                    with open("/home/pi/buoy-codes/data files/testData 12-00(4 July 2018)mvg_avg.txt","a") as f:
-                        f.write(msg)
+                    #t=t+1 #uncomment to use displaying live readings
+                    #msg = str(t)+','+str(avg)+'\n'
+                    #with open("/home/pi/buoy-codes/data files/testData 11-00(6 July 2018)mvg_avg.txt","a") as f:
+                    #    f.write(msg)
                     time.sleep(1)
             else:
                     print "Sensor read failed!"

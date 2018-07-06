@@ -7,6 +7,9 @@ style.use('fivethirtyeight')
 fig = plt.figure()
 ax1 = fig.add_subplot(2,1,1)
 ax2 = fig.add_subplot(2,1,2)
+Kp = 0.5
+Kd = 0.01
+Ki = 0
 
 def animate(i):
 #========================================================================================================#
@@ -27,7 +30,7 @@ def animate(i):
         ys1.append(y1)
     ax1.clear()
     ax1.plot(xs1, ys1)
-    ax1.set_title('Error status')
+    ax1.set_title('Error status for Kp = {} Kd = {} Ki = {}'.format(Kp,Kd,Ki))
     ax1.set_ylabel('Error (in cm)')
     #ax1.set_xlabel('time steps')
     #Part for subplot 1 ends here
@@ -49,9 +52,9 @@ def animate(i):
         ys2.append(y2)
     ax2.clear()
     ax2.plot(xs2, ys2)
-    ax2.set_title('PWM status')
+    ax2.set_title('PWM status for Kp = {} Kd = {} Ki = {}'.format(Kp,Kd,Ki))
     ax2.set_ylabel('PWM in %age')
-    ax2.set_xlabel('time steps')
+    ax2.set_xlabel('time (in secs)')
     #Part for subplot 2 ends here
 #========================================================================================================#
 	
