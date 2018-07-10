@@ -18,7 +18,7 @@ class plotLive():
         self.ani = 0
         #print(self.fname1, self.fname2)
         
-    def animate(self, interval):
+    def animate(self,interval):
     #========================================================================================================#
         # Part for subplot 1 starts here
         file1 = open(self.fname1,'r')
@@ -69,9 +69,13 @@ class plotLive():
         file2.close()
         #Part for subplot 2 ends here
     #========================================================================================================#
-    def action(self):    
-        self.ani = animation.FuncAnimation(self.fig, self.animate, self.interval) #for 1 sec delay 1000
+    def action(self):
+        self.ani = animation.FuncAnimation(self.fig, self.animate, interval = self.interval) #for 1 sec delay 1000
         plt.show()
+        #print('number of times')
+        
 if __name__=='__main__':
     obj = plotLive('one.txt','two.txt')
+    #ani = animation.FuncAnimation(obj.fig, obj.animate, obj.interval)
+    #plt.show()
     obj.action()

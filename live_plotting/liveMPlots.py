@@ -57,3 +57,4 @@ def animate(i):
 	
 ani = animation.FuncAnimation(fig, animate, interval=1000) #for 1 sec delay 1000
 plt.show()
+print("main thread ended")

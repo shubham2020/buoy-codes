@@ -13,13 +13,19 @@ obj.initialization()
 for i in range(25):
     print(obj.reading())
 '''
-
+'''
 import liveMultiPlots as lmp
 import threading
+
 obj = lmp.plotLive('one.txt','two.txt')
-#obj.action()
-t1 =threading.Thread(target = obj.action)
+        
+t1 = threading.Thread(target = obj.action)
+#t1.daemon =True
 t1.start()
+print("main thread ended")
+'''
+
+
 
         
 
