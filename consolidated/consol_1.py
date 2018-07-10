@@ -36,7 +36,7 @@ class Ubot:
         self.pwm = 0
         self.t = 0
         self.dt = 0
-        
+        # both the flags should be zero for operation
         self.shutflag = 0
         self.writeflag = 0
         
@@ -51,7 +51,7 @@ class Ubot:
         self.plt_obj = lmp.plotLive(self.dtname,self.pwmname,self.figname, self.Kp, self.Kd, self.Ki)
         #now call self.plt_obj.action when required the live plotting
         
-    def user_depth_input(self): #this part will have its own thread
+    def user_depth_input(self): #thread 1
         while True:
             user_input = input('Enter the new desired depth or e to exit : ')
             if user_input.lower() == 'e':
@@ -61,28 +61,28 @@ class Ubot:
             else:
                 self.desired_depth = float(user_input)
     
-    def writing_text(self):
+    def writing_text(self): #thread 2
         #including display part by writing it to a file
 	#self.t = self.t+self.dt
         while True:
             if self.writeflag == 0:
-                msg1 = str(self.t)+','+str(self.current_depth)+'\n'
-                msg2 = str(self.t)+','+str(self.pwm)+'\n'
+                msg1 = str(int(self.t/1000))+','+str(self.current_depth)+'\n'
+                msg2 = str(int(self.t/1000))+','+str(self.pwm)+'\n'
                 with open(self.dtname,'a') as file1:
                     file1.write(msg1)
                 with open(self.pwmname,'a') as file2:
                     file2.write(msg2)
-                print('{0:10}{1}'.format(self.current_depth, self.pwm))
+                #print('{0:10}{1}'.format(self.current_depth, self.pwm))
             elif self.writeflag == 1:
                 return
 	
-    def plot_data(self):
+    def plot_data(self): #thread 3
         self.plt_obj.action()
         self.shutflag = 1
         self.writeflag = 1
 						
 						
-    def controller(self): #write controller
+    def controller(self): #thread 4
         e1 = time.time() # for computing dt first time
         error_int = 0
         self.act_obj.Start(0)
