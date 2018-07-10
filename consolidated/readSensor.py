@@ -20,8 +20,11 @@ class sensorRead:
             exit(1)
         
         time.sleep(5)
-        self.sensor.read(ms5837.OSR_8192)
-        self.calib_depth = self.sensor.depth()*100  
+        
+        for i in range(self.n):
+            self.sensor.read(ms5837.OSR_8192)
+            self.calib_depth =self.calib_depth + self.sensor.depth()*100
+        self.calib_depth = self.calib_depth/self.n
     
     # Spew readings
     def reading(self):

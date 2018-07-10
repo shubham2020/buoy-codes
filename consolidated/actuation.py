@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 
 class actuator:
-    try:
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
@@ -25,10 +24,8 @@ class actuator:
     def Stop(self):
         self.pin.stop()
     
-    finally:
-        self.pin.stop()
+    def CleanUp(self):
         GPIO.cleanup()
-        
         
 if __name__=='__main__':
     obj = actuator()

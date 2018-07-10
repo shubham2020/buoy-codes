@@ -5,7 +5,7 @@ from matplotlib import style
 class plotLive():
     style.use('fivethirtyeight')
     
-    def __init__(self, fname1, fname2, Kp = 0, Kd = 0, Ki = 0, interval=1000):
+    def __init__(self, fname1, fname2, figname, Kp = 0, Kd = 0, Ki = 0, interval=500): #first depth then PWM
         self.fig = plt.figure()
         self.ax1 = self.fig.add_subplot(2,1,1)
         self.ax2 = self.fig.add_subplot(2,1,2)
@@ -15,6 +15,7 @@ class plotLive():
         self.interval = interval
         self.fname1 = fname1
         self.fname2 = fname2
+        self.fig_name = figname
         self.ani = 0
         #print(self.fname1, self.fname2)
         
@@ -33,14 +34,14 @@ class plotLive():
                 x1,y1 = line1.split(',')
                 #print(x1,y1)
             x1 = int(x1)
-            y1 = float(int(float(y1)*10)/10) # added -ve sign for showing depth in downward direction
+            y1 = -float(int(float(y1)*10)/10) # added -ve sign for showing depth in downward direction
             #print(x,y)
             xs1.append(x1)
             ys1.append(y1)
         self.ax1.clear()
         self.ax1.plot(xs1, ys1)
-        self.ax1.set_title('Error status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki))
-        self.ax1.set_ylabel('Error (in cm)')
+        self.ax1.set_title('depth status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki))
+        self.ax1.set_ylabel('depth (in cm)')
         file1.close()
         #ax1.set_xlabel('time steps')
         #Part for subplot 1 ends here
@@ -57,7 +58,7 @@ class plotLive():
             if len(line2)>1:
                 x2,y2 = line2.split(',')
             x2 = int(x2)
-            y2 = float(int(float(y2)*10)/10) # added -ve sign for showing depth in downward direction
+            y2 = float(int(float(y2)*10)/10) 
             #print(x,y)
             xs2.append(x2)
             ys2.append(y2)
@@ -73,6 +74,7 @@ class plotLive():
         self.ani = animation.FuncAnimation(self.fig, self.animate, interval = self.interval) #for 1 sec delay 1000
         plt.show()
         #print('number of times')
+        self.fig.savefig(self.fig_name)
         
 if __name__=='__main__':
     obj = plotLive('one.txt','two.txt')
