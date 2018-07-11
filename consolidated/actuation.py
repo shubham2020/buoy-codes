@@ -11,7 +11,7 @@ class actuator:
         self.freq = freq
         self.pin = GPIO.PWM(self.pwm_pin, self.freq)
         self.dc = 0 #duty cycle
-        self.pin.start(dc)
+        self.pin.start(self.dc)
         
     def Start(self, dc = 0):
         self.dc = dc

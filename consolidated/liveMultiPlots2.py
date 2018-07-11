@@ -1,12 +1,11 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
-#import threading
 
 class plotLive():
     style.use('fivethirtyeight')
     
-    def __init__(self,fname0, fname1, fname2, figname, Kp = 0, Kd = 0, Ki = 0, interval=500):
+    def __init__(self, fname1, fname2, figname, Kp = 0, Kd = 0, Ki = 0, interval=1000): #first depth then PWM
         self.fig = plt.figure()
         self.ax1 = self.fig.add_subplot(2,1,1)
         self.ax2 = self.fig.add_subplot(2,1,2)
@@ -14,34 +13,13 @@ class plotLive():
         self.Kd = Kd
         self.Ki = Ki
         self.interval = interval
-        self.fname1 = fname1 #current depth
-        self.fname2 = fname2 #PWM
-        self.fname0 = fname0 #desired depth
+        self.fname1 = fname1
+        self.fname2 = fname2
         self.fig_name = figname
         self.ani = 0
-        #self.rw_lock = threading.Lock() #for reading and writing files
         #print(self.fname1, self.fname2)
         
     def animate(self,interval):
-    #=======================================================================================================#
-        # Part for subplotting the desired depth
-        file0 = open(self.fname0,'r')
-        graph_data0 = file0.read()
-        lines0 = graph_data0.split('\n')
-        #print(lines)
-        xs0 = []
-        ys0 = []
-        x0=y0=0
-        for line0 in lines0:
-            if len(line0)>1:
-                x0,y0 = line0.split(',')
-                #print(x1,y1)
-            x0 = int(x0)
-            y0 = -float(int(float(y0)*10)/10) # added -ve sign for showing depth in downward direction
-            #print(x,y)
-            xs0.append(x0)
-            ys0.append(y0)
-        # Part for desired depth ends here
     #========================================================================================================#
         # Part for subplot 1 starts here
         file1 = open(self.fname1,'r')
@@ -61,9 +39,7 @@ class plotLive():
             xs1.append(x1)
             ys1.append(y1)
         self.ax1.clear()
-        self.ax1.plot(xs1, ys1, 'g', label= 'current depth') #for current depth
-        self.ax1.plot(xs0, ys0, 'b', label= 'desired depth') #for desired depth
-        self.ax1.legend(loc = 'best')
+        self.ax1.plot(xs1, ys1)
         self.ax1.set_title('depth status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki))
         self.ax1.set_ylabel('depth (in cm)')
         file1.close()

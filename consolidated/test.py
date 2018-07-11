@@ -17,7 +17,7 @@ obj.initialization()
 for i in range(25):
     print(obj.reading())
 '''
-#'''
+'''
 import liveMultiPlots as lmp
 import threading
 
@@ -27,9 +27,19 @@ t1 = threading.Thread(target = obj.action)
 #t1.daemon =True
 t1.start()
 print("main thread ended")
-#'''
+'''
+'''
+import actuation as act
+import time
 
-
+obj = act.actuator(1)
+obj.Start(50)
+time.sleep(5)
+obj.CDC(5)
+time.sleep(5)
+obj.Stop()
+obj.CleanUp()
+'''
 
         
 
