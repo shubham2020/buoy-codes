@@ -33,7 +33,7 @@ class Ubot:
         self.figname = ''
         
         self.Kp = 0.05
-        self.Kd = 0.001
+        self.Kd = -0.001
         self.Ki = 0
         
         self.desired_depth = 0
@@ -82,17 +82,17 @@ class Ubot:
         while True:
             if self.writeflag == 0:
                 #with self.plt_obj.rw_lock:
-                msg0 = str(int(self.t/1000))+','+str(self.desired_depth)+'\n'
-                msg1 = str(int(self.t/1000))+','+str(self.current_depth)+'\n'
-                msg2 = str(int(self.t/1000))+','+str(self.pwm)+'\n'
-                with open(self.ddname,'a')as file0:
-                    file0.write(msg0)
-                with open(self.dtname,'a') as file1:
-                    file1.write(msg1)
-                with open(self.pwmname,'a') as file2:
-                    file2.write(msg2)
-                time.sleep(1/100)
-                #print('{0:10}{1}'.format(self.current_depth, self.pwm))
+                    msg0 = str(int(self.t/1000))+','+str(self.desired_depth)+'\n'
+                    msg1 = str(int(self.t/1000))+','+str(self.current_depth)+'\n'
+                    msg2 = str(int(self.t/1000))+','+str(self.pwm)+'\n'
+                    with open(self.ddname,'a')as file0:
+                        file0.write(msg0)
+                    with open(self.dtname,'a') as file1:
+                        file1.write(msg1)
+                    with open(self.pwmname,'a') as file2:
+                        file2.write(msg2)
+                    #time.sleep(1/100)
+                    #print('{0}\t\t\t{1}'.format(self.current_depth, self.pwm))
             elif self.writeflag == 1:
                 return
 	
@@ -161,6 +161,7 @@ if __name__=='__main__':
         #print('Caution : This exit means Ubot has to be taken out of water for next usage')
         #n = int(input('Enter 1 to exit and 2 to continue operation :- '))
     #if n == 1:
+    #thread3.start()
     obj.act_obj.CleanUp()
     print('Ubot has been shut down!!!')
         #break

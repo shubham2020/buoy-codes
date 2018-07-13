@@ -141,7 +141,7 @@ if __name__=='__main__':
     thread1 = threading.Thread(target = obj.user_depth_input)
     thread2 = threading.Thread(target = obj.writing_text)
     #thread3 = threading.Thread(target = obj.plot_data) #we had a plot saving issue
-	process = multiprocessing.Process(target = obj.plot_data) #here using only one extra process for plotting rest can be assimilated in threading
+    process = multiprocessing.Process(target = obj.plot_data) #here using only one extra process for plotting rest can be assimilated in threading
     thread4 = threading.Thread(target = obj.controller)
     thread1.daemon = True
     thread2.daemon = True
@@ -152,11 +152,11 @@ if __name__=='__main__':
     thread4.start()  #starting the controller
     thread2.start()  #starting the text writting
     #thread3.start()  #starting the live plotting
-	process.start()   #starting the live plotting process
+    process.start()   #starting the live plotting process
     thread1.start()  #starting the user prompt
         
     thread4.join()       #as user hits 'e' thread1 stops, thread2 stops, thread4 stops
-                         #thread3 is user dependent as user closes the window the graph gets saved and
+    #process.join()       #thread3 is user dependent as user closes the window the graph gets saved and
                          #thread gets stopped
                          #also if user closes graph window thread4, thread2 , thread3 get stopped and
                          #thread1 being daemon thread gets killed as the main exits

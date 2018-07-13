@@ -32,11 +32,11 @@ print("main thread ended")
 import actuation as act
 import time
 
-obj = act.actuator(1)
+obj = act.actuator()
 obj.Start(50)
-time.sleep(5)
+time.sleep(15)
 obj.CDC(5)
-time.sleep(5)
+time.sleep(10)
 obj.Stop()
 obj.CleanUp()
 '''

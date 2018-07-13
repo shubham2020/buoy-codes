@@ -20,11 +20,15 @@ class sensorRead:
             exit(1)
         
         time.sleep(5)
-        
-        for i in range(self.n):
-            self.sensor.read(ms5837.OSR_8192)
-            self.calib_depth =self.calib_depth + self.sensor.depth()*100
-        self.calib_depth = self.calib_depth/self.n
+        key = int(input("Enter 1 to read from sensor or 2 to input calibration depth :-"))
+        if key == 1: 
+            for i in range(self.n):
+                self.sensor.read(ms5837.OSR_8192)
+                self.calib_depth =self.calib_depth + self.sensor.depth()*100
+            self.calib_depth = self.calib_depth/self.n
+        else :
+            self.calib_depth = float(input("Calibration depth (in cms) = "))
+        print("Current Calibration depth(in cms) = {}".format(self.calib_depth))
     
     # Spew readings
     def reading(self):
