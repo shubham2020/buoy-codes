@@ -92,7 +92,7 @@ class Ubot:
                     file1.write(msg1)
                 with open(self.pwmname,'a') as file2:
                     file2.write(msg2)
-                time.sleep(1/100)
+                time.sleep(0.1)
                 #print('{0:10}{1}'.format(self.current_depth, self.pwm))
             elif self.writeflag == 1:
                 return
@@ -112,14 +112,18 @@ class Ubot:
             if self.shutflag == 0:
                 self.current_depth = self.sensor_obj.reading()
                 error = (self.current_depth - self.desired_depth)
-                if math.fabs(error) < 0.4: #to stop actuation once we reach within +/-2cm of target depth
+                e2 = time.time() #time ends now
+                self.dt = (int((e2 - e1)*1000))
+                e1 = time.time() #time starts now
+                self.t = self.t+self.dt
+                if math.fabs(error) < 0.4 or error < 0: #to stop actuation once we reach within +/-2cm of target depth
                     #print("Bot within no action range")
                     self.pwn = 0
                     self.act_obj.CDC(self.pwm) #to stop actuation which otherwise continues with previous values
                     continue
-                e2 = time.time() #time ends now
-                self.dt = (int((e2 - e1)*1000))
-                e1 = time.time() #time starts now
+                #e2 = time.time() #time ends now
+                #self.dt = (int((e2 - e1)*1000))
+                #e1 = time.time() #time starts now
                 error_bar =  ((error - error_prev)*1000)/self.dt
                 error_prev = error
                 error_int = error_int + error*(self.dt/1000)
@@ -127,7 +131,7 @@ class Ubot:
                 out = (1/(1+math.exp(-net)))  #sigmoid function to bound pwm
                 self.pwm = float(int(out*1000)/10)
                 self.act_obj.CDC(self.pwm) #changing duty cycle
-                self.t = self.t+self.dt
+                #self.t = self.t+self.dt
                 
             elif self.shutflag == 1:
                 self.act_obj.Stop()

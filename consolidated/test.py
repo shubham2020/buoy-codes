@@ -40,6 +40,10 @@ time.sleep(10)
 obj.Stop()
 obj.CleanUp()
 '''
+'''
+import time
 
-        
-
+print('I am going to sleep!')
+time.sleep(0.25)
+print('I woke up!')
+'''

@@ -43,6 +43,7 @@ class plotLive():
                 #print(x,y)
                 xs0.append(x0)
                 ys0.append(y0)
+            file0.close()
             # Part for desired depth ends here
         #========================================================================================================#
             # Part for subplot 1 starts here
@@ -70,7 +71,7 @@ class plotLive():
                                fontsize = 14)
             self.ax1.set_ylabel('depth (in cm)', fontsize = 12)
             #self.ax1.set_xlabel('time (in secs)', fontsize = 12)
-            #file1.close()
+            file1.close()
             #Part for subplot 1 ends here
         #========================================================================================================#
             #Part for subplot 2 starts here
@@ -94,7 +95,7 @@ class plotLive():
             #self.ax2.set_title('PWM status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki))
             self.ax2.set_ylabel('PWM in %age', fontsize = 12)
             self.ax2.set_xlabel('time (in secs)', fontsize = 12)
-            #file2.close()
+            file2.close()
             #Part for subplot 2 ends here
     #========================================================================================================#
     def action(self):

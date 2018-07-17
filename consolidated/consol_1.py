@@ -94,7 +94,7 @@ class Ubot:
                     file1.write(msg1)
                     #with open(self.pwmname,'a') as file2:
                     file2.write(msg2)
-                    time.sleep(1/100)
+                    time.sleep(0.1) #put values in decimals not division manner
                     #print('{0}\t\t\t{1}'.format(self.current_depth, self.pwm))
             elif self.writeflag == 1:
                 file0.close()
