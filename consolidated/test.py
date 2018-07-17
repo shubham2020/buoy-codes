@@ -28,18 +28,18 @@ t1 = threading.Thread(target = obj.action)
 t1.start()
 print("main thread ended")
 '''
-'''
+
 import actuation as act
 import time
 
 obj = act.actuator()
-obj.Start(50)
+obj.Start(100)
 time.sleep(15)
 obj.CDC(5)
 time.sleep(10)
 obj.Stop()
 obj.CleanUp()
-'''
+
 '''
 import time
 

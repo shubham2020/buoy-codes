@@ -33,8 +33,8 @@ class Ubot:
         self.pwmname = ''
         self.figname = ''
         
-        self.Kp = 0.05
-        self.Kd = 0.001
+        self.Kp = 0.005
+        self.Kd = 0.0001
         self.Ki = 0
         
         self.desired_depth = 0
@@ -50,7 +50,7 @@ class Ubot:
         
         
     def initialize(self): #initialize by preparing file names
-        ddname_obj = tfn.dateS('des. depth on ')
+        ddname_obj = tfn.dateS('des. depth on ') #objects for the imported user modules are created and initialized
         dtname_obj = tfn.dateS('curr depth on ')
         pwmname_obj = tfn.dateS('PWM on ')
         figname_obj = tfn.dateS('Plot on ')
@@ -62,7 +62,7 @@ class Ubot:
         self.dtname = dtname_obj.dateStamp()
         self.pwmname = pwmname_obj.dateStamp()
         self.figname = figname_obj.dateStamp()
-        self.plt_obj = lmp.plotLive(self.ddname,self.dtname,self.pwmname,self.figname, self.Kp, self.Kd, self.Ki)
+        self.plt_obj = lmp.plotLive(self.ddname,self.dtname,self.pwmname,self.figname, self.Kp, self.Kd, self.Ki, 500)
         #now call self.plt_obj.action when required the live plotting
         
     def user_depth_input(self): #thread 1
@@ -118,7 +118,7 @@ class Ubot:
                 self.t = self.t+self.dt
                 if math.fabs(error) < 0.4 or error < 0: #to stop actuation once we reach within +/-2cm of target depth
                     #print("Bot within no action range")
-                    self.pwn = 0
+                    self.pwm = 0
                     self.act_obj.CDC(self.pwm) #to stop actuation which otherwise continues with previous values
                     continue
                 #e2 = time.time() #time ends now
