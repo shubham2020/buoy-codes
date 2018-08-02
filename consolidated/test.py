@@ -34,9 +34,9 @@ import time
 
 obj = act.actuator()
 obj.Start(100)
-time.sleep(15)
+time.sleep(3)
 obj.CDC(5)
-time.sleep(10)
+time.sleep(5)
 obj.Stop()
 obj.CleanUp()
 

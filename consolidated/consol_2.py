@@ -33,8 +33,8 @@ class Ubot:
         self.pwmname = ''
         self.figname = ''
         
-        self.Kp = 0.005
-        self.Kd = 0.0001
+        self.Kp = 0.05
+        self.Kd = 0
         self.Ki = 0
         
         self.desired_depth = 0
@@ -92,7 +92,7 @@ class Ubot:
                     file1.write(msg1)
                 with open(self.pwmname,'a') as file2:
                     file2.write(msg2)
-                time.sleep(0.1)
+                time.sleep(0.01)
                 #print('{0:10}{1}'.format(self.current_depth, self.pwm))
             elif self.writeflag == 1:
                 return
@@ -128,7 +128,7 @@ class Ubot:
                 error_prev = error
                 error_int = error_int + error*(self.dt/1000)
                 net = self.Kp*error + self.Kd*error_bar + self.Ki*error_int
-                out = (1/(1+math.exp(-net)))  #sigmoid function to bound pwm
+                out = math.fabs(net/(1+net))#(1/(1+math.exp(-net)))  #sigmoid function to bound pwm
                 self.pwm = float(int(out*1000)/10)
                 self.act_obj.CDC(self.pwm) #changing duty cycle
                 #self.t = self.t+self.dt
