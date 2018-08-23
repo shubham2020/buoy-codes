@@ -32,8 +32,8 @@ class Ubot:
         self.pwmname = ''
         self.figname = ''
         
-        self.Kp = 0.005
-        self.Kd = 0.001
+        self.Kp = 0.05
+        self.Kd = 0
         self.Ki = 0
         
         self.desired_depth = 0

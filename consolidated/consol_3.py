@@ -46,6 +46,8 @@ class Ubot:
         self.shutflag = 0
         self.writeflag = 0
         
+        self.threshold = 0 #for making the bot neutrally buoyant i.e. at any depth it can hover
+        
         #self.input_lock = threading.Lock() # to prevent multiple promts as in depth and exiting
         
         
@@ -116,19 +118,12 @@ class Ubot:
                 self.dt = (int((e2 - e1)*1000))
                 e1 = time.time() #time starts now
                 self.t = self.t+self.dt
-                if math.fabs(error) < 0 or error < 0: #to stop actuation once we reach within +/-2cm of target depth
-                    #print("Bot within no action range")
-                    self.pwm = 0
-                    self.act_obj.CDC(self.pwm) #to stop actuation which otherwise continues with previous values
-                    continue
-                #e2 = time.time() #time ends now
-                #self.dt = (int((e2 - e1)*1000))
-                #e1 = time.time() #time starts now
+                error = error if error >= 0 else 0 # to reject negative errors as they mean actuate when desired depth is below the current depth
                 error_bar =  ((error - error_prev)*1000)/self.dt
                 error_prev = error
                 error_int = error_int + error*(self.dt/1000)
                 net = self.Kp*error + self.Kd*error_bar + self.Ki*error_int
-                out = (1/(1+math.exp(-net)))#math.fabs(net/(1+net))#  #sigmoid function to bound pwm
+                out = (1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
                 self.pwm = float(int(out*1000)/10)
                 self.act_obj.CDC(self.pwm) #changing duty cycle
                 #self.t = self.t+self.dt
