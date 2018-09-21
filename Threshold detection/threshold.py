@@ -5,6 +5,7 @@ import liveMultiPlots as lp
 import threading
 import multiprocessing
 import time
+import sys
 
 class thresholds:
     def __init__(self):
@@ -46,10 +47,10 @@ class thresholds:
             self.actuator.CDC(self.pwm)
             t0 = time.time()
             while (time.time()-t0)<300:
-                printf '\r',
                 t = int((300 - (time.time()-t0)))
-                msg = str(t//60)+':'+str(t%60)
-                print msg,
+                msg = str(t//60)+':'+str(t%60)+'\r'
+                sys.stdout.write(msg)
+                sys.stdout.flush()
                 time.sleep(1)
         self.actuator.Stop()
         
