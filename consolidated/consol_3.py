@@ -3,6 +3,7 @@ import math
 import time
 import threading
 import multiprocessing
+import sys
 #user defined classes and functions
 import textFileName as tfn
 import readSensor as rs
@@ -83,6 +84,7 @@ class Ubot:
 	#self.t = self.t+self.dt
         #t = self.t # to ensure all are saving the same time for the parallel graph plotting
         while True:
+            #correct these file writtings using the consol_1.py method
             if self.writeflag == 0:
                 #with self.plt_obj.rw_lock:
                 msg0 = str(int(self.t/1000))+','+str(self.desired_depth)+'\n'
@@ -103,6 +105,14 @@ class Ubot:
         self.plt_obj.action()  #its object has been created in the initialize
         self.shutflag = 1
         self.writeflag = 1
+        
+    def screenWrite(self):
+        while self.shutflag == 0:
+            # call user_depth_input when needed else print error pwm current depth and
+            #desired depth live
+            # So ask for user interrupt for entering desired depth
+            sys.stdout.write()
+            sys.stdout.flush()
 						
 						
     def controller(self): #thread 4

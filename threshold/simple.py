@@ -1,6 +1,6 @@
 import readSensor as rs
 import actuation as act
-import threading
+import RPi.GPIO as GPIO
 import sys
 import time
 
@@ -13,13 +13,18 @@ def read():
     actuator.CDC(pwm)
     t0 = time.time()
     print('Depth(cm)\tTime')
-    while True:
+    t=0
+    while t<300:
         value = sensor.reading()
         t = int(time.time()-t0)
-        t_new = str(t//60)+':'+str(t%60)
-        value = str(int(value*10)/10)+'\t\t'+t_new+'\r'
-        sys.stdout.write(value)
-        sys.stdout.flush()        
+        t_new = str(t//60)+':'+str(t%60)+'   '
+        val = str(int(value*10)/10)+'\t\t'+(t_new)+'\r'
+        sys.stdout.write(val)
+        sys.stdout.flush()
+    actuator.Stop()
         
-if __name__ == '__main__':
+
+try:
     read()
+except KeyboardInterrupt:
+    GPIO.cleanup()
