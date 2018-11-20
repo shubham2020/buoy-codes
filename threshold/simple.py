@@ -22,6 +22,7 @@ def read():
         sys.stdout.write(val)
         sys.stdout.flush()
     actuator.Stop()
+    GPIO.cleanup()
         
 
 try:

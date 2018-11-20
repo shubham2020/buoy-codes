@@ -20,6 +20,9 @@ class plotLive():
         self.fname0 = fname0 #desired depth
         self.fig_name = figname
         self.ani = 0
+        self.file0 = None
+        self.file1 = None
+        self.file2 = None
         #self.rw_lock = threading.Lock() #for reading and writing files
         #print(self.fname1, self.fname2)
         
@@ -27,8 +30,8 @@ class plotLive():
         #with self.rw_lock:
         #=======================================================================================================#
             # Part for subplotting the desired depth
-            file0 = open(self.fname0,'r')
-            graph_data0 = file0.read()
+            self.file0 = open(self.fname0,'r')
+            graph_data0 = self.file0.read()
             lines0 = graph_data0.split('\n')
             #print(lines)
             xs0 = []
@@ -43,14 +46,14 @@ class plotLive():
                 #print(x,y)
                 xs0.append(x0)
                 ys0.append(y0)
-            file0.close()
+            self.file0.close()
             # Part for desired depth ends here
         #========================================================================================================#
             # Part for subplot 1 starts here
-            file1 = open(self.fname1,'r')
-            graph_data1 = file1.read()
+            self.file1 = open(self.fname1,'r')
+            graph_data1 = self.file1.read()
             lines1 = graph_data1.split('\n')
-            #print(lines)
+            #print(lines1)
             xs1 = []
             ys1 = []
             x1= y1=0
@@ -60,7 +63,7 @@ class plotLive():
                     #print(x1,y1)
                 x1 = int(x1)
                 y1 = -float(y1)#float(int(float(y1)*10)/10) # added -ve sign for showing depth in downward direction
-                #print(x,y)
+                #print(x1,y1)
                 xs1.append(x1)
                 ys1.append(y1)
             self.ax1.clear()
@@ -70,15 +73,15 @@ class plotLive():
             self.ax1.set_title('Depth & PWM status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki),
                                fontsize = 14)
             self.ax1.set_ylabel('depth (in cm)', fontsize = 12)
-            #self.ax1.set_xlabel('time (in secs)', fontsize = 12)
-            file1.close()
+            #self.ax1.set_xlabel('time (in secs)', fontsize = 6)
+            self.file1.close()
             #Part for subplot 1 ends here
         #========================================================================================================#
             #Part for subplot 2 starts here
-            file2 = open(self.fname2,'r')
-            graph_data2 = file2.read()
+            self.file2 = open(self.fname2,'r')
+            graph_data2 = self.file2.read()
             lines2 = graph_data2.split('\n')
-            #print(lines)
+            #print(lines2)
             xs2 = []
             ys2 = []
             x2= y2=0
@@ -95,14 +98,20 @@ class plotLive():
             #self.ax2.set_title('PWM status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki))
             self.ax2.set_ylabel('PWM in %age', fontsize = 12)
             self.ax2.set_xlabel('time (in secs)', fontsize = 12)
-            file2.close()
+            self.file2.close()
             #Part for subplot 2 ends here
     #========================================================================================================#
     def action(self):
+        #self.file0 = open(self.fname0,'r')
+        #self.file1 = open(self.fname0,'r')
+        #self.file2 = open(self.fname0,'r')
         self.ani = animation.FuncAnimation(self.fig, self.animate, interval = self.interval) #for 1 sec delay 1000
         plt.show()
         #print('number of times')
         self.fig.savefig(self.fig_name)
+        #self.file0.close()
+        #self.file1.close()
+        #self.file2.close()
         
 if __name__=='__main__':
     obj = plotLive('one.txt','two.txt')

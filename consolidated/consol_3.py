@@ -1,3 +1,6 @@
+# removed user depth input's while loop, by adding the while loop we can indefinitely give desired depth
+
+
 #standard or other libraries
 import math
 import time
@@ -29,12 +32,13 @@ class Ubot:
         #self.pwmname_obj.forText()
         #self.figname_obj.forFig()
         
-        self.ddname = ''
+        self.ddname = ''  #desired depth
         self.dtname = ''  #the returned names will be stored in these variables
         self.pwmname = ''
         self.figname = ''
+        self.velname = ''
         
-        self.Kp = 0.0001
+        self.Kp = 0.05
         self.Kd = 0
         self.Ki = 0
         
@@ -43,11 +47,17 @@ class Ubot:
         self.pwm = 0
         self.t = 0
         self.dt = 0
+        self.velocity = 0
+        
         # both the flags should be zero for operation
+        
         self.shutflag = 0
         self.writeflag = 0
         
-        self.threshold = 0 #for making the bot neutrally buoyant i.e. at any depth it can hover
+        #self.threshold = 2.1972 #for making the bot neutrally buoyant i.e. at any depth it can hover
+        
+        self.power = [0, 3.6, 7.68, 10.92, 15.64, 19.19, 23.31, 27.14, 32, 34.58, 37.8]
+        self.pulse = [0, 32.1, 45.7, 55.7, 65.7, 72.1, 79.3, 84.3, 91.4, 95, 100]
         
         #self.input_lock = threading.Lock() # to prevent multiple promts as in depth and exiting
         
@@ -57,21 +67,24 @@ class Ubot:
         dtname_obj = tfn.dateS('curr depth on ')
         pwmname_obj = tfn.dateS('PWM on ')
         figname_obj = tfn.dateS('Plot on ')
+        velocity_obj = tfn.dateS('Velocity on ')
         ddname_obj.forText()
         dtname_obj.forText()
         pwmname_obj.forText()
         figname_obj.forFig()
+        velocity_obj.forText()
         self.ddname = ddname_obj.dateStamp()
         self.dtname = dtname_obj.dateStamp()
         self.pwmname = pwmname_obj.dateStamp()
         self.figname = figname_obj.dateStamp()
+        self.velname = velocity_obj.dateStamp()
         self.plt_obj = lmp.plotLive(self.ddname,self.dtname,self.pwmname,self.figname, self.Kp, self.Kd, self.Ki, 500)
         #now call self.plt_obj.action when required the live plotting
         
     def user_depth_input(self): #thread 1
-        while True:
+        #while True:
             #with self.input_lock: #to prevent multiple prompts at a time
-            user_input = float(input('Enter the new desired depth or 1 to exit :- '))
+            user_input = float(input("Enter the kill code :-"))#'Enter the new desired depth or 1 to exit :- '))
             if user_input == 1:
                 self.shutflag = 1
                 self.writeflag = 1
@@ -83,22 +96,28 @@ class Ubot:
         #including display part by writing it to a file
 	#self.t = self.t+self.dt
         #t = self.t # to ensure all are saving the same time for the parallel graph plotting
+        file0 = open(self.ddname,'a')
+        file1 = open(self.dtname,'a')
+        file2 = open(self.pwmname,'a')
+        file3 = open(self.velname,'a')
         while True:
             #correct these file writtings using the consol_1.py method
             if self.writeflag == 0:
-                #with self.plt_obj.rw_lock:
                 msg0 = str(int(self.t/1000))+','+str(self.desired_depth)+'\n'
-                msg1 = str(int(self.t/1000))+','+str(self.current_depth)+'\n'
+                msg1 = str(int(self.t/1000))+','+str(int(self.current_depth*10)/10)+'\n'
                 msg2 = str(int(self.t/1000))+','+str(self.pwm)+'\n'
-                with open(self.ddname,'a')as file0:
-                    file0.write(msg0)
-                with open(self.dtname,'a') as file1:
-                    file1.write(msg1)
-                with open(self.pwmname,'a') as file2:
-                    file2.write(msg2)
-                time.sleep(0.01)
+                msg3 = str(int(self.t/1000))+','+str(int(self.velocity*10)/10)+'\n'
+                file0.write(msg0)
+                file1.write(msg1)
+                file2.write(msg2)
+                file3.write(msg3)
+                time.sleep(0.1)
                 #print('{0:10}{1}'.format(self.current_depth, self.pwm))
             elif self.writeflag == 1:
+                file0.close()
+                file1.close()
+                file2.close()
+                file3.close()
                 return
 	
     def plot_data(self): # process 3 rather than thread 3
@@ -106,20 +125,35 @@ class Ubot:
         self.shutflag = 1
         self.writeflag = 1
         
-    def screenWrite(self):
+    def screenWrite(self): # thread 5
+        print('\nerror\tPWM\tCurrent Depth\tVelocity')
         while self.shutflag == 0:
             # call user_depth_input when needed else print error pwm current depth and
             #desired depth live
             # So ask for user interrupt for entering desired depth
-            sys.stdout.write()
+            error = int(self.current_depth*10)/10 - self.desired_depth
+            msg = str(error)+'\t'+str(self.pwm)+'\t'+str(int(self.current_depth*10)/10)+'\t\t'+str(int(self.velocity*10)/10)+'\r'            
+            sys.stdout.write(msg)
             sys.stdout.flush()
-						
+            time.sleep(0.01)
+        else:
+            return
+    
+    def interpolate(self,p):
+        for i in range(len(self.power)):
+            if (p >= self.power[i]):
+                out = ((self.pulse[i+1]-self.pulse[i])/(self.power[i+1]-self.power[i]))*(p-self.power[i])+self.pulse[i]
+		return out
+	    else:
+                return 0 # this condition will take care for any negative values
 						
     def controller(self): #thread 4
         e1 = time.time() # for computing dt first time
         #error_int = 0
         self.act_obj.Start(0)
-        #error_prev = 0
+        error_prev = 0
+        v1 = self.sensor_obj.reading()
+        p0 = 0 #value for apparant weight divide by a constant 
         while True:
             if self.shutflag == 0:
                 self.current_depth = self.sensor_obj.reading()
@@ -128,13 +162,17 @@ class Ubot:
                 self.dt = (int((e2 - e1)*1000))
                 e1 = time.time() #time starts now
                 self.t = self.t+self.dt
+                # code for velocity calculation using rate of depth change
+                v2 = self.sensor_obj.reading()
+                self.velocity = (v2 - v1)/self.dt
+                v1 = self.sensor_obj.reading()
                 #error = error if error >= 0 else 0 # to reject negative errors as they mean actuate when desired depth is below the current depth
-                #error_bar =  ((error - error_prev)*1000)/self.dt
-                #error_prev = error
+                error_bar =  ((error - error_prev)*1000)/self.dt
+                error_prev = error
                 #error_int = error_int + error*(self.dt/1000)
-                net = self.Kp*error #+ self.Kd*error_bar + self.Ki*error_int
-                out = (1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
-                self.pwm = float(int(out*1000)/10)
+                p = -p0 + self.Kp*error + self.Kd*error_bar #+ self.Ki*error_int
+                out = self.interpolate(p)#(1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
+                self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
                 self.act_obj.CDC(self.pwm) #changing duty cycle
                                 
             elif self.shutflag == 1:
@@ -149,35 +187,27 @@ if __name__=='__main__':
     thread1 = threading.Thread(target = obj.user_depth_input)
     thread2 = threading.Thread(target = obj.writing_text)
     #thread3 = threading.Thread(target = obj.plot_data) #we had a plot saving issue
-    process = multiprocessing.Process(target = obj.plot_data) #here using only one extra process for plotting rest can be assimilated in threading
+    #process = multiprocessing.Process(target = obj.plot_data) #here using only one extra process for plotting rest can be assimilated in threading
     thread4 = threading.Thread(target = obj.controller)
-    thread1.daemon = True
+    thread5 = threading.Thread(target = obj.screenWrite)
+    #thread1.daemon = True
     thread2.daemon = True
     #thread3.daemon = True
     thread4.daemon = True
-    #while True:
+    thread5.daemon = True
     obj.desired_depth = float(input('Enter the desired depth :- '))
     thread4.start()  #starting the controller
     thread2.start()  #starting the text writting
     #thread3.start()  #starting the live plotting
-    process.start()   #starting the live plotting process
+    #process.start()   #starting the live plotting process
     thread1.start()  #starting the user prompt
+    thread5.start()  #for screen write
         
-    thread4.join()       #as user hits 'e' thread1 stops, thread2 stops, thread4 stops
-    #process.join()       #thread3 is user dependent as user closes the window the graph gets saved and
-                         #thread gets stopped
-                         #also if user closes graph window thread4, thread2 , thread3 get stopped and
-                         #thread1 being daemon thread gets killed as the main exits
-    #with obj.input_lock:    #trying this to stop multiple prompts as in depth and here
-        #print('Caution : This exit means Ubot has to be taken out of water for next usage')
-        #n = int(input('Enter 1 to exit and 2 to continue operation :- '))
-    #if n == 1:
+    thread1.join()
+    obj.plot_data()        #as user hits 'e' thread1 stops, thread2 stops, thread4 stops
     obj.act_obj.CleanUp()
     print('Ubot has been shut down!!!')
-        #break
-    #else:
-        #obj.initialize() #to create new text files and new graphs from fresh
-        #continue
+
     
         
 
