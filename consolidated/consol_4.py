@@ -62,6 +62,12 @@ class Ubot:
         
         #self.input_lock = threading.Lock() # to prevent multiple promts as in depth and exiting
         
+        #####################################
+        # for adding relay in the circuit
+        self.relay_pin = 36
+        GPIO.setup(self.relay_pin, GPIO.OUT, initial=GPIO.LOW)
+        #####################################
+        
         
     def initialize(self): #initialize by preparing file names
         ddname_obj = tfn.dateS('des. depth on ') #objects for the imported user modules are created and initialized
@@ -172,6 +178,9 @@ class Ubot:
         self.Kd = 0.05
         while True:
             if self.shutflag == 0:
+                ###############relay pin control ##################
+                GPIO.output(self.relay_pin, HIGH)
+                ###################################################
                 self.current_depth = self.sensor_obj.reading()
                 # To rectify error i am simulating error to be 40
                 error = (self.current_depth - self.desired_depth)
@@ -193,11 +202,12 @@ class Ubot:
                 #print(p)
                 out = self.interpolate(p)#(1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
                 #print(out)
-                self.pwm = 40+float(int(out*10))/10 # this will truncate any values after 1 decimal place
+                self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
                 self.act_obj.CDC(self.pwm) #changing duty cycle
                 time.sleep(0.5) # reduced the actuation frequency
                                 
             elif self.shutflag == 1:
+                GPIO.output(self.relay_pin,LOW) #relay pin control
                 self.act_obj.Stop()
                 return
         
