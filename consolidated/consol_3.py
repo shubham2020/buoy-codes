@@ -38,8 +38,8 @@ class Ubot:
         self.figname = ''
         self.velname = ''
         
-        self.Kp = 0.05
-        self.Kd = 0
+        self.Kp = 0#0.2
+        self.Kd = 0#0.5
         self.Ki = 0
         
         self.desired_depth = 0
@@ -56,6 +56,7 @@ class Ubot:
         
         #self.threshold = 2.1972 #for making the bot neutrally buoyant i.e. at any depth it can hover
         
+        #Experimentally determined values of PWM and corresponding power values 
         self.power = [0, 3.6, 7.68, 10.92, 15.64, 19.19, 23.31, 27.14, 32, 34.58, 37.8]
         self.pulse = [0, 32.1, 45.7, 55.7, 65.7, 72.1, 79.3, 84.3, 91.4, 95, 100]
         
@@ -126,26 +127,39 @@ class Ubot:
         self.writeflag = 1
         
     def screenWrite(self): # thread 5
-        print('\nerror\tPWM\tCurrent Depth\tVelocity')
-        while self.shutflag == 0:
+        #print('\nerror\tPWM\tCurrent Depth\tVelocity')
+        print('\nerror\tPWM\tCurrent Depth\tVelocity\tTime')
+        # this part is for timing the code
+        t0 = time.time()
+        t=0
+        #while self.shutflag == 0:
+        while t <= 300 and self.shutflag == 0:
             # call user_depth_input when needed else print error pwm current depth and
-            #desired depth live
+            # desired depth live
             # So ask for user interrupt for entering desired depth
+            ############################ timing part for open loop tests
+            t = int(time.time()-t0)
+            t_new = str(t//60)+':'+str(t%60)+'   '
+            ############################
             error = int(self.current_depth*10)/10 - self.desired_depth
-            msg = str(error)+'\t'+str(self.pwm)+'\t'+str(int(self.current_depth*10)/10)+'\t\t'+str(int(self.velocity*10)/10)+'\r'            
+            msg = str(error)+'\t'+str(self.pwm)+'\t'+str(int(self.current_depth*10)/10)+'\t\t'+str(int(self.velocity*10)/10)+'\t\t'+t_new+'\r'            
             sys.stdout.write(msg)
             sys.stdout.flush()
             time.sleep(0.01)
         else:
+            self.shutflag = 1 # this part added for open loop test
             return
     
     def interpolate(self,p):
         for i in range(len(self.power)):
-            if (p >= self.power[i]):
+            if (p >= self.power[i]) and (p <= 37.8):
                 out = ((self.pulse[i+1]-self.pulse[i])/(self.power[i+1]-self.power[i]))*(p-self.power[i])+self.pulse[i]
+		#print(out)
 		return out
-	    else:
-                return 0 # this condition will take care for any negative values
+	    if (p > 37.8):
+                return (100.0) # this condition will take care for any negative values
+            else:
+                return (0)
 						
     def controller(self): #thread 4
         e1 = time.time() # for computing dt first time
@@ -153,27 +167,35 @@ class Ubot:
         self.act_obj.Start(0)
         error_prev = 0
         v1 = self.sensor_obj.reading()
-        p0 = 0 #value for apparant weight divide by a constant 
+        p0 = 0 #value for apparant weight divide by a constant i.e. power required for neutral buoyancy
+        self.Kp = 0#0.2 #declared here again so as not to go to initializations again and again
+        self.Kd = 0#0.5
         while True:
             if self.shutflag == 0:
                 self.current_depth = self.sensor_obj.reading()
+                # To rectify error i am simulating error to be 40
                 error = (self.current_depth - self.desired_depth)
                 e2 = time.time() #time ends now
                 self.dt = (int((e2 - e1)*1000))
                 e1 = time.time() #time starts now
-                self.t = self.t+self.dt
+                self.t = self.t + self.dt
                 # code for velocity calculation using rate of depth change
                 v2 = self.sensor_obj.reading()
                 self.velocity = (v2 - v1)/self.dt
                 v1 = self.sensor_obj.reading()
                 #error = error if error >= 0 else 0 # to reject negative errors as they mean actuate when desired depth is below the current depth
-                error_bar =  ((error - error_prev)*1000)/self.dt
-                error_prev = error
+                #error_bar =  ((error - error_prev)*1000)/self.dt
+                error_bar =  ((self.current_depth - error_prev)*1000)/self.dt
+                error_prev = self.current_depth
+                #error_prev = error
                 #error_int = error_int + error*(self.dt/1000)
-                p = -p0 + self.Kp*error + self.Kd*error_bar #+ self.Ki*error_int
+                p = p0 + self.Kp*error + self.Kd*error_bar #+ self.Ki*error_int
+                #print(p)
                 out = self.interpolate(p)#(1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
-                self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
+                #print(out)
+                self.pwm = 41.8#float(int(out*10))/10 # this will truncate any values after 1 decimal place
                 self.act_obj.CDC(self.pwm) #changing duty cycle
+                time.sleep(0.5) # reduced the actuation frequency
                                 
             elif self.shutflag == 1:
                 self.act_obj.Stop()

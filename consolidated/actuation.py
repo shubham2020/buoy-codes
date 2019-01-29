@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 
 class actuator:
     
@@ -30,7 +31,8 @@ class actuator:
 if __name__=='__main__':
     obj = actuator()
     obj.Start()
-    obj.CDC(50)
+    obj.CDC(10)
+    time.sleep(1000)
     obj.Stop()
         
 

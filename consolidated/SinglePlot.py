@@ -50,7 +50,9 @@ class plotLive():
         self.fig.savefig(self.fig_name)
         
 if __name__=='__main__':
-    obj = plotLive('one.txt','')
+    file_name = '/home/pi/buoy-codes/data files/curr depth on Tue Nov 20 14-00-50 2018.txt'
+    figure_name = '/home/pi/buoy-codes/graphs/Open-loop Plot on Tue Nov 20 14-00-50 2018.jpg'
+    obj = plotLive(file_name, figure_name)
     #ani = animation.FuncAnimation(obj.fig, obj.animate, obj.interval)
     #plt.show()
     obj.action()
