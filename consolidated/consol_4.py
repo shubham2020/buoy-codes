@@ -7,6 +7,7 @@ import time
 import threading
 import multiprocessing
 import sys
+import RPi.GPIO as GPIO
 #user defined classes and functions
 import textFileName as tfn
 import readSensor as rs
@@ -14,6 +15,9 @@ import liveMultiPlots as lmp
 import actuation as act
 
 class Ubot:
+        
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BOARD)
     
     def __init__(self): #initialize sensor for calib_depth and create objects of classes
         
@@ -179,7 +183,7 @@ class Ubot:
         while True:
             if self.shutflag == 0:
                 ###############relay pin control ##################
-                GPIO.output(self.relay_pin, HIGH)
+                GPIO.output(self.relay_pin, GPIO.HIGH)
                 ###################################################
                 self.current_depth = self.sensor_obj.reading()
                 # To rectify error i am simulating error to be 40
@@ -207,7 +211,7 @@ class Ubot:
                 time.sleep(0.5) # reduced the actuation frequency
                                 
             elif self.shutflag == 1:
-                GPIO.output(self.relay_pin,LOW) #relay pin control
+                GPIO.output(self.relay_pin,GPIO.LOW) #relay pin control
                 self.act_obj.Stop()
                 return
         
