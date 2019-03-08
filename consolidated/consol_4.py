@@ -42,8 +42,8 @@ class Ubot:
         self.figname = ''
         self.velname = ''
         
-        self.Kp = 0.05
-        self.Kd = 0.05
+        self.Kp = 0.35
+        self.Kd = 0
         self.Ki = 0
         
         self.desired_depth = 0
@@ -116,7 +116,15 @@ class Ubot:
             if self.writeflag == 0:
                 msg0 = str(int(self.t/1000))+','+str(self.desired_depth)+'\n'
                 msg1 = str(int(self.t/1000))+','+str(int(self.current_depth*10)/10)+'\n'
-                msg2 = str(int(self.t/1000))+','+str(self.pwm)+'\n'
+                ###########################################################
+                # adding for offset
+                pwm = 40
+                if self.pwm > 40:
+                    pwm = self.pwm
+                else:
+                    pwm = 40
+                ###########################################################
+                msg2 = str(int(self.t/1000))+','+str(pwm)+'\n'        #here pwm is the local variable
                 msg3 = str(int(self.t/1000))+','+str(int(self.velocity*10)/10)+'\n'
                 file0.write(msg0)
                 file1.write(msg1)
@@ -178,8 +186,8 @@ class Ubot:
         error_prev = self.desired_depth
         v1 = self.sensor_obj.reading()
         p0 = 0 #value for apparant weight divide by a constant i.e. power required for neutral buoyancy
-        self.Kp = 0.05 #declared here again so as not to go to initializations again and again
-        self.Kd = 0.05
+        #self.Kp = 0.35 #declared here again so as not to go to initializations again and again
+        #self.Kd = 0
         while True:
             if self.shutflag == 0:
                 ###############relay pin control ##################

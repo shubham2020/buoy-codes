@@ -6,7 +6,7 @@ class actuator:
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
 	
-    def __init__(self, freq = 100):
+    def __init__(self, freq = 1): # frequePWM
         self.pwm_pin = 40
         GPIO.setup(self.pwm_pin, GPIO.OUT, initial=GPIO.LOW)
         self.freq = freq

@@ -96,7 +96,7 @@ class plotLive():
             self.ax2.clear()
             self.ax2.plot(xs2, ys2)
             #self.ax2.set_title('PWM status for Kp = {} Kd = {} Ki = {}'.format(self.Kp,self.Kd,self.Ki))
-            self.ax2.set_ylabel('PWM in %age', fontsize = 12)
+            self.ax2.set_ylabel('duty factor in %age', fontsize = 12)
             self.ax2.set_xlabel('time (in secs)', fontsize = 12)
             self.file2.close()
             #Part for subplot 2 ends here
