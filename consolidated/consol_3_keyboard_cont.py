@@ -7,6 +7,7 @@ import time
 import threading
 import multiprocessing
 import sys
+import keyboard # this library is yet to be installed on this pi
 #user defined classes and functions
 import textFileName as tfn
 import readSensor as rs
@@ -83,16 +84,38 @@ class Ubot:
         #now call self.plt_obj.action when required the live plotting
         
     def user_depth_input(self): #thread 1
-        #while True:
+        '''
+        while True:
             #with self.input_lock: #to prevent multiple prompts at a time
-            user_input = float(input("Enter the kill code :-"))#'Enter the new desired depth or 1 to exit :- '))
+            user_input = float(input())#"Enter the kill code :-"))#'Enter the new desired depth or 1 to exit :- '))
             if user_input == 1:
                 self.shutflag = 1
                 self.writeflag = 1
                 return
             else:
                 self.desired_depth = float(user_input)
-    
+        '''
+        while True:
+            try:
+                if keyboard.is_pressed('u') and self.pwm < 100:
+                    self.pwm = self.pwm +1
+                    time.sleep(0.08)
+                    continue
+                if keyboard.is_pressed('j') and pwm > 0:
+                    self.pwm = self.pwm -1
+                    time.sleep(0.08)
+                    continue
+                if keyboard.is_pressed('e'):
+                    self.shutflag = 1
+                    self.writeflag = 1
+                    return
+                else:
+                    pass
+            except:
+                break
+                
+
+        
     def writing_text(self): #thread 2
         #including display part by writing it to a file
 	#self.t = self.t+self.dt
@@ -133,7 +156,7 @@ class Ubot:
         t0 = time.time()
         t=0
         #while self.shutflag == 0:
-        while t <= 900 and self.shutflag == 0:
+        while t <= 1500 and self.shutflag == 0: # Be advised time limit is very high
             # call user_depth_input when needed else print error pwm current depth and
             # desired depth live
             # So ask for user interrupt for entering desired depth
@@ -193,7 +216,7 @@ class Ubot:
                 #print(p)
                 out = self.interpolate(p)#(1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
                 #print(out)
-                self.pwm = 50#float(int(out*10))/10 # this will truncate any values after 1 decimal place
+                self.pwm = 30#float(int(out*10))/10 # this will truncate any values after 1 decimal place
                 self.act_obj.CDC(self.pwm) #changing duty cycle
                 time.sleep(0.5) # reduced the actuation frequency
                                 
