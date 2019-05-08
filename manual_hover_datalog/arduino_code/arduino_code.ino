@@ -37,6 +37,10 @@ void loop(){
  
  Voltage = (mean_filter / 1024.0) * 5000; // Gets you mV
  Amps = ((Voltage - ACSoffset) / mVperAmp)/0.7;
+ if (Amps < 0)
+ {
+   Amps = 0;
+ }
  Amps_inter =  Amps*10; //needed integer type for conversion to char type so had to do this
  sprintf(Amps_new,"%02X",Amps_inter);
  
@@ -46,10 +50,11 @@ void loop(){
  //Serial.print(Voltage,3); // the '3' after voltage allows you to display 3 digits after decimal point
  //Serial.print("\t Amps = "); // shows the voltage measured 
  Serial.println(Amps_new); // the '3' after voltage allows you to display 3 digits after decimal point
+ //Serial.println(Amps);
  //delay(10);  
  //int t2 = millis();
  //int t = t2 - t1;
  //Serial.print("Time taken in milliseconds = ");
  //Serial.println(t,6);
- //delay(1000);
+ delay(50);// to solve the problem of the frequency matching
 }
