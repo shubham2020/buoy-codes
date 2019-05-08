@@ -2,6 +2,7 @@
 import serial
 import xlsxwriter
 import time
+import sys
 #############		End				#################
 
 #############	User defined libraries	#############
@@ -14,7 +15,7 @@ class datalog:
 		self.sensor_obj = rs.sensorRead() #can pass filter window size as an argument
                 self.sensor_obj.initialization()
                 print('Sensor initalized and calibrated')
-                file_name_object = tfn.dateS('hovering data_log on ')
+                file_name_object = tfn.dateS(sys.argv[1]+' hovering data_log on ')      #to sync the name of the video and the experiment
                 file_name_object.forText()
                 file_name = file_name_object.dateStamp()
                 self.workbook = xlsxwriter.Workbook(file_name)
