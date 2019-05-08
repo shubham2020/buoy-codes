@@ -56,5 +56,5 @@ void loop(){
  //int t = t2 - t1;
  //Serial.print("Time taken in milliseconds = ");
  //Serial.println(t,6);
- delay(50);// to solve the problem of the frequency matching
+ delay(40);// to solve the problem of the frequency matching
 }
