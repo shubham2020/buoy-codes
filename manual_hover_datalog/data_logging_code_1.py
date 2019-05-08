@@ -12,8 +12,8 @@ import readSensor as rs
 class datalog:
 	def __init__(self):
 		self.ser = serial.Serial('/dev/ttyACM0', 9600)		#object for getting handle of serial communication
-		#self.sensor_obj = rs.sensorRead() #can pass filter window size as an argument
-                #self.sensor_obj.initialization()
+		self.sensor_obj = rs.sensorRead() #can pass filter window size as an argument
+                self.sensor_obj.initialization()
                 print('Sensor initalized and calibrated')
                 file_name_object = tfn.dateS('hovering data_log on ')
                 file_name_object.forText()
@@ -34,10 +34,14 @@ class datalog:
 		t1 = time.time()
 		t2 = time.time()
 		while True:
-			self.current_depth = 20#self.sensor_obj.reading()
-			self.current_depth = int(self.current_depth*10)/10
-			if(self.ser.in_waiting >0):		#to check if the buffer has some data (its type is int)
-				self.line = (str(self.ser.readline()))
+			#self.current_depth = self.sensor_obj.reading()
+			#self.current_depth = int(self.current_depth*10)/10
+			if(self.ser.in_waiting >0):		# to check if the buffer has some data (its type is int)
+                                if len(self.ser.readline())> 0:
+                                        self.line = str(int(self.ser.readline(),16))
+                                        print(self.line)
+                                else:
+                                        continue
 			else:
 				continue
 			for col in range(0,4):
@@ -46,14 +50,15 @@ class datalog:
 				elif col == 1:
 					item = 0 #self.line*3.5 	# 3.5 ohm is the resistance of the heater
 				elif col == 2:
-					item = self.current_depth
+					item = 0#self.current_depth
 				else:
 					t2 = time.time()
-					print(t2)
+					#print(t2)
 					item = (float(int((t2 - t1)*1000)))/1000
 				self.worksheet.write(row, col, item)
 			row = row +1
 			print('writing data')
+			time.sleep(1)
 			
 if __name__ == '__main__':
 	try:	

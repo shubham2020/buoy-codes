@@ -7,6 +7,8 @@ int RawValue= 0;
 int ACSoffset = 2500; 
 double Voltage = 0;
 double Amps = 0;
+int Amps_inter = 0;
+char Amps_new[50] = {0};
 int filter[11] = {0};
 int sum = 0;
 float mean_filter;
@@ -35,13 +37,15 @@ void loop(){
  
  Voltage = (mean_filter / 1024.0) * 5000; // Gets you mV
  Amps = ((Voltage - ACSoffset) / mVperAmp)/0.7;
+ Amps_inter =  Amps*10; //needed integer type for conversion to char type so had to do this
+ sprintf(Amps_new,"%02X",Amps_inter);
  
  //Serial.print("Raw Value = " ); // shows pre-scaled value 
  //Serial.print(mean_filter); 
  //Serial.print("\t mV = "); // shows the voltage measured 
  //Serial.print(Voltage,3); // the '3' after voltage allows you to display 3 digits after decimal point
  //Serial.print("\t Amps = "); // shows the voltage measured 
- Serial.println(Amps,1); // the '3' after voltage allows you to display 3 digits after decimal point
+ Serial.println(Amps_new); // the '3' after voltage allows you to display 3 digits after decimal point
  //delay(10);  
  //int t2 = millis();
  //int t = t2 - t1;
