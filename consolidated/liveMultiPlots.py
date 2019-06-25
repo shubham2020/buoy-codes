@@ -106,7 +106,7 @@ class plotLive():
         #self.file1 = open(self.fname0,'r')
         #self.file2 = open(self.fname0,'r')
         self.ani = animation.FuncAnimation(self.fig, self.animate, interval = self.interval) #for 1 sec delay 1000
-        plt.show()
+        #plt.show()
         #print('number of times')
         self.fig.savefig(self.fig_name)
         #self.file0.close()

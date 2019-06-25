@@ -1,7 +1,7 @@
 import serial
 import time
 
-ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyUSB0', 9600) #ACM0 for arduino uno
 
 while 1: 
     if(ser.in_waiting >0):		#to check if the buffer has some data (its type is int)

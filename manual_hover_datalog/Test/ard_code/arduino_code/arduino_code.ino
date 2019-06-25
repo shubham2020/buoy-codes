@@ -2,6 +2,8 @@
 Measuring Current Using ACS712
 */
 const int analogIn = A0;
+#include <Wire.h>
+#define SLAVE_ADDRESS 0x04
 int mVperAmp = 185; // use 100 for 20A Module and 66 for 30A Module
 int RawValue= 0;
 int ACSoffset = 2500; 
@@ -16,6 +18,8 @@ int i;
 
 void setup(){ 
  Serial.begin(9600);
+ Wire.begin(SLAVE_ADDRESS);
+ Wire.onRequest(sendData);
 }
 
 void loop(){
@@ -58,4 +62,7 @@ void loop(){
  //Serial.print("Time taken in milliseconds = ");
  //Serial.println(t,6);
  delay(40);// to solve the problem of the frequency matching
+}
+void sendData() {
+  Wire.write(Amps_new);
 }
