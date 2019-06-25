@@ -215,8 +215,8 @@ class Ubot:
                 out = self.interpolate(p)#(1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
                 #print(out)
                 self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
-                if self.current_depth < = 10:
-                        self.act_obj_CDC(0)
+                if (self.current_depth < 10):
+                        self.act_obj.CDC(0)
                 else:
                         self.act_obj.CDC(self.pwm) #changing duty cycle
                 time.sleep(0.5) # reduced the actuation frequency
