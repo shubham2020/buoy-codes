@@ -1,5 +1,5 @@
 # removed user depth input's while loop, by adding the while loop we can indefinitely give desired depth
-
+# removed relay pin control
 
 #standard or other libraries
 import math
@@ -42,8 +42,8 @@ class Ubot:
         self.figname = ''
         self.velname = ''
         
-        self.Kp = 0.35
-        self.Kd = 0
+        self.Kp = 0.5
+        self.Kd = 0.1
         self.Ki = 0
         
         self.desired_depth = 0
@@ -68,8 +68,8 @@ class Ubot:
         
         #####################################
         # for adding relay in the circuit
-        self.relay_pin = 36
-        GPIO.setup(self.relay_pin, GPIO.OUT, initial=GPIO.LOW)
+        #self.relay_pin = 36
+        #GPIO.setup(self.relay_pin, GPIO.OUT, initial=GPIO.LOW)
         #####################################
         
         
@@ -191,7 +191,7 @@ class Ubot:
         while True:
             if self.shutflag == 0:
                 ###############relay pin control ##################
-                GPIO.output(self.relay_pin, GPIO.HIGH)
+                #GPIO.output(self.relay_pin, GPIO.HIGH)
                 ###################################################
                 self.current_depth = self.sensor_obj.reading()
                 # To rectify error i am simulating error to be 40
@@ -222,7 +222,7 @@ class Ubot:
                 time.sleep(0.5) # reduced the actuation frequency
                                 
             elif self.shutflag == 1:
-                GPIO.output(self.relay_pin,GPIO.LOW) #relay pin control
+                #GPIO.output(self.relay_pin,GPIO.LOW) #relay pin control
                 self.act_obj.Stop()
                 return
         
