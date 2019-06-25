@@ -41,7 +41,7 @@ class datalog:
 		t2 = time.time()
 		while True:
 			self.current_depth = self.sensor_obj.reading()
-			self.current_depth = int(self.current_depth*10)/10+0.1
+			self.current_depth = int(self.current_depth*10)/10+0.4
 			if (self.ser.in_waiting >0) and len(self.ser.readline()) > 0:		# to check if the buffer has some data (its type is int)
                                 try:
                                         self.line = (float(int(self.ser.readline(),16)))/10

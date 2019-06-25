@@ -42,8 +42,8 @@ class Ubot:
         self.figname = ''
         self.velname = ''
         
-        self.Kp = 0.5
-        self.Kd = 0.1
+        self.Kp = 1 #0.557 #2.73
+        self.Kd = 0        #96.17
         self.Ki = 0
         
         self.desired_depth = 0
@@ -118,13 +118,13 @@ class Ubot:
                 msg1 = str(int(self.t/1000))+','+str(int(self.current_depth*10)/10)+'\n'
                 ###########################################################
                 # adding for offset
-                pwm = 40
-                if self.pwm > 40:
-                    pwm = self.pwm
-                else:
-                    pwm = 40
+                #pwm = 40
+                #if self.pwm > 40:
+                #    pwm = self.pwm
+                #else:
+                #    pwm = 40
                 ###########################################################
-                msg2 = str(int(self.t/1000))+','+str(pwm)+'\n'        #here pwm is the local variable
+                msg2 = str(int(self.t/1000))+','+str(self.pwm)+'\n'        #here pwm is the local variable
                 msg3 = str(int(self.t/1000))+','+str(int(self.velocity*10)/10)+'\n'
                 file0.write(msg0)
                 file1.write(msg1)
@@ -170,7 +170,7 @@ class Ubot:
     
     def interpolate(self,p):
         for i in range(len(self.power)):
-            if (p >= self.power[i]) and (p <= 37.8):
+            if (p >= self.power[i]) and p <= self.power[i+1] and(p <= 37.8):
                 out = ((self.pulse[i+1]-self.pulse[i])/(self.power[i+1]-self.power[i]))*(p-self.power[i])+self.pulse[i]
 		#print(out)
 		return out
@@ -185,7 +185,7 @@ class Ubot:
         self.act_obj.Start(0)
         error_prev = self.desired_depth
         v1 = self.sensor_obj.reading()
-        p0 = 7 #value for apparant weight divide by a constant i.e. power required for neutral buoyancy
+        p0 = 9 #value for apparant weight divide by a constant i.e. power required for neutral buoyancy
         #self.Kp = 0.35 #declared here again so as not to go to initializations again and again
         #self.Kd = 0
         while True:
@@ -214,11 +214,14 @@ class Ubot:
                 #print(p)
                 out = self.interpolate(p)#(1/(1+math.exp(-net+self.threshold)))#sigmoid function to bound pwm
                 #print(out)
-                self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
-                if (self.current_depth < 10):
-                        self.act_obj.CDC(0)
+                #print(self.pwm)
+                #self.pwm = 0
+                if (self.current_depth < 5):
+                        self.pwm = 33
+                        self.act_obj.CDC(self.pwm)
                 else:
-                        self.act_obj.CDC(self.pwm) #changing duty cycle
+                        self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
+                        self.act_obj.CDC(self.pwm)      #changing duty cycle
                 time.sleep(0.5) # reduced the actuation frequency
                                 
             elif self.shutflag == 1:
