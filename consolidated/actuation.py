@@ -31,7 +31,7 @@ class actuator:
 if __name__=='__main__':
     obj = actuator(100)
     obj.Start()
-    obj.CDC(50)
+    obj.CDC(100)
     time.sleep(1000)
     obj.Stop()
         

@@ -93,7 +93,7 @@ class Ubot:
         #now call self.plt_obj.action when required the live plotting
         
     def user_depth_input(self): #thread 1
-        #while True:
+        while True:
             #with self.input_lock: #to prevent multiple prompts at a time
             user_input = float(input("Enter the kill code :-"))#'Enter the new desired depth or 1 to exit :- '))
             if user_input == 1:
@@ -202,6 +202,12 @@ class Ubot:
                 e1 = time.time() #time starts now
                 self.t = self.t + self.dt
                 # code for velocity calculation using rate of depth change
+                #################
+                if self.t >= 1200000:
+                        self.desired_depth = 55
+                else:
+                        pass
+                #################
                 v2 = self.sensor_obj.reading()
                 self.velocity = (v2 - v1)/self.dt
                 v1 = self.sensor_obj.reading()
