@@ -29,9 +29,9 @@ class actuator:
         GPIO.cleanup()
         
 if __name__=='__main__':
-    obj = actuator()
+    obj = actuator(100)
     obj.Start()
-    obj.CDC(10)
+    obj.CDC(50)
     time.sleep(1000)
     obj.Stop()
         

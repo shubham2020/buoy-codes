@@ -42,8 +42,8 @@ class Ubot:
         self.figname = ''
         self.velname = ''
         
-        self.Kp = 1 #0.557 #2.73
-        self.Kd = 0        #96.17
+        self.Kp = 2.73 #0.557 #2.73
+        self.Kd = 96.17        #96.17
         self.Ki = 0
         
         self.desired_depth = 0
@@ -177,7 +177,8 @@ class Ubot:
 	    if (p > 37.8):
                 return (100.0) # this condition will take care for any negative values
             else:
-                return (0)
+                continue
+        return 0
 						
     def controller(self): #thread 4
         e1 = time.time() # for computing dt first time
@@ -185,7 +186,7 @@ class Ubot:
         self.act_obj.Start(0)
         error_prev = self.desired_depth
         v1 = self.sensor_obj.reading()
-        p0 = 9 #value for apparant weight divide by a constant i.e. power required for neutral buoyancy
+        p0 = 3 #value for apparant weight divide by a constant i.e. power required for neutral buoyancy
         #self.Kp = 0.35 #declared here again so as not to go to initializations again and again
         #self.Kd = 0
         while True:
@@ -217,7 +218,7 @@ class Ubot:
                 #print(self.pwm)
                 #self.pwm = 0
                 if (self.current_depth < 5):
-                        self.pwm = 33
+                        self.pwm = 10
                         self.act_obj.CDC(self.pwm)
                 else:
                         self.pwm = float(int(out*10))/10 # this will truncate any values after 1 decimal place
